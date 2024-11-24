@@ -70,7 +70,9 @@ export async function rejectRegistration(id: string, adminUsername: string) {
 		);
 
 		if (registration) {
-			await ApprovedUser.deleteOne({ userId: registration.userId });
+			await ApprovedUser.deleteOne({
+				userId: registration._id.toString(),
+			});
 
 			await sendRejectionEmail(
 				registration.name,
