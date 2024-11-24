@@ -36,7 +36,7 @@ export async function sendApprovalEmail(
 				name,
 				course,
 				mobile,
-				email
+				email,
 			}),
 			attachments: [
 				{
@@ -65,7 +65,7 @@ export async function sendRejectionEmail(
 		const data = await resend.emails.send({
 			from: `${process.env.NEXT_PUBLIC_EVENT_NAME} - Agamya Ticketing Platform <admin@ticketing.agamya.dev>`,
 			to: [email],
-			subject: `${process.env.NEXT_PUBLIC_EVENT_NAME} Registration Status Update`,
+			subject: `${process.env.NEXT_PUBLIC_EVENT_NAME} Registration Rejected`,
 			react: RejectionEmailTemplate({
 				name,
 				course,

@@ -29,7 +29,7 @@ export const RejectionEmailTemplate: React.FC<RejectionEmailTemplateProps> = ({
 		<Body style={main}>
 			<Container style={container}>
 				<Section style={headerSection}>
-					<Heading style={h1}>Registration Update</Heading>
+					<Heading style={h1}>Registration Rejected</Heading>
 				</Section>
 				<Section style={contentSection}>
 					<Text style={text}>Dear {name},</Text>
