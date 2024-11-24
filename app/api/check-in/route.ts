@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { ApprovedUser } from '@/models/ApprovedUser';
 import { Registration } from '@/models/Registration';
+import { ObjectId } from 'mongodb';
 
 export async function POST(request: Request) {
 	try {
@@ -9,7 +10,7 @@ export async function POST(request: Request) {
 		await connectDB();
 
 		// Check if user is approved
-		const approvedUser = await ApprovedUser.findOne({ userId: userId });
+		const approvedUser = await ApprovedUser.findOne({ userId });
 		if (!approvedUser) {
 			return NextResponse.json({
 				success: false,
@@ -18,7 +19,9 @@ export async function POST(request: Request) {
 		}
 
 		// Get user details from registration
-		const registration = await Registration.findOne({ userId });
+		const registration = await Registration.findOne({
+			_id: ObjectId.createFromHexString(userId),
+		});
 		if (!registration) {
 			return NextResponse.json({
 				success: false,
