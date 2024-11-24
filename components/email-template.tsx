@@ -39,7 +39,7 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({
 			<Container style={container}>
 				<Section style={logoContainer}>
 					<Img
-						src={`https://${process.env.DOMAIN}/logo.png`}
+						src={`https://${process.env.NEXT_PUBLIC_DOMAIN}/logo.png`}
 						width="150"
 						height="50"
 						alt={`${process.env.NEXT_PUBLIC_EVENT_NAME} Logo`}
@@ -115,7 +115,7 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({
 					<Section style={ctaSection}>
 						<Link
 							style={ctaButton}
-							href={`https://${process.env.DOMAIN}/details`}
+							href={`https://${process.env.NEXT_PUBLIC_DOMAIN}/details`}
 						>
 							View Event Details
 						</Link>
@@ -129,15 +129,21 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({
 						{process.env.NEXT_PUBLIC_EVENT_NAME || ''} Team
 					</Text>
 					<Text style={footerLinks}>
-						<Link href={`https://${process.env.DOMAIN}`}>
+						<Link
+							href={`https://${process.env.NEXT_PUBLIC_DOMAIN}`}
+						>
 							Registration Website
 						</Link>{' '}
 						|{' '}
-						<Link href={`https://${process.env.DOMAIN}/contact`}>
+						<Link
+							href={`https://${process.env.NEXT_PUBLIC_DOMAIN}/contact`}
+						>
 							Contact Us
 						</Link>{' '}
 						|{' '}
-						<Link href={`https://${process.env.DOMAIN}/privacy`}>
+						<Link
+							href={`https://${process.env.NEXT_PUBLIC_DOMAIN}/privacy`}
+						>
 							Privacy Policy
 						</Link>
 					</Text>

@@ -1,4 +1,4 @@
-import NextAuth from 'next-auth';
+import NextAuth, { DefaultSession } from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 import { Admin } from '@/models/Admin';
 import bcrypt from 'bcryptjs';
@@ -99,10 +99,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 		async session({ session, token }) {
 			if (session?.user) {
 				// Sync session with token data
-				session.user.id = token.id;
-				session.user.username = token.username;
-				session.user.name = token.name;
-				session.user.isAdmin = token.isAdmin;
+				session.user.id = token.id as string;
+				session.user.username = token.username as string;
+				session.user.name = token.name as string;
+				session.user.isAdmin = token.isAdmin as boolean;
 			}
 			return session;
 		},
