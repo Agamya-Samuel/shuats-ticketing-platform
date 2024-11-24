@@ -108,9 +108,19 @@ export function DashboardClient() {
 		}
 	};
 
+	const calculateCounts = (requests: Registration[]) => {
+		return {
+			pending: requests.filter(r => r.status === 'pending').length,
+			accepted: requests.filter(r => r.status === 'accepted').length,
+			rejected: requests.filter(r => r.status === 'rejected').length
+		};
+	};
+
 	if (isLoading) {
 		return <LoadingSkeleton />;
 	}
+
+	const counts = calculateCounts(requests);
 
 	return (
 		<div className="container mx-auto p-4 max-w-7xl">
@@ -123,9 +133,15 @@ export function DashboardClient() {
 				onValueChange={(value) => setActiveTab(value)}
 			>
 				<TabsList className="grid w-full grid-cols-3 bg-slate-200">
-					<TabsTrigger value="pending">Pending</TabsTrigger>
-					<TabsTrigger value="accepted">Accepted</TabsTrigger>
-					<TabsTrigger value="rejected">Rejected</TabsTrigger>
+					<TabsTrigger value="pending">
+						Pending ({counts.pending})
+					</TabsTrigger>
+					<TabsTrigger value="accepted">
+						Accepted ({counts.accepted})
+					</TabsTrigger>
+					<TabsTrigger value="rejected">
+						Rejected ({counts.rejected})
+					</TabsTrigger>
 				</TabsList>
 			</Tabs>
 			<div className="mb-4 relative ">
@@ -150,16 +166,16 @@ export function DashboardClient() {
 									Name
 								</TableHead>
 								<TableHead className="w-[120px] font-semibold">
-									User ID
+									College ID
+								</TableHead>
+								<TableHead className="w-[100px] font-semibold">
+									Course
 								</TableHead>
 								<TableHead className="w-[200px] font-semibold">
 									Email
 								</TableHead>
 								<TableHead className="w-[120px] font-semibold">
 									Mobile
-								</TableHead>
-								<TableHead className="w-[100px] font-semibold">
-									Course
 								</TableHead>
 								<TableHead className="w-[100px] font-semibold">
 									Money Paid
@@ -196,9 +212,9 @@ export function DashboardClient() {
 										{request.name}
 									</TableCell>
 									<TableCell>{request.userId}</TableCell>
+									<TableCell>{request.course}</TableCell>
 									<TableCell>{request.email}</TableCell>
 									<TableCell>{request.mobile}</TableCell>
-									<TableCell>{request.course}</TableCell>
 									<TableCell>₹{request.moneyPaid}</TableCell>
 									{activeTab === 'accepted' && (
 										<>
