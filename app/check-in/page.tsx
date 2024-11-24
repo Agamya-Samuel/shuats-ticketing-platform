@@ -13,8 +13,10 @@ import {
 	AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { CheckInSuccessAlert } from '@/components/check-in-success-alert';
 
 interface UserInfo {
+	_id: string;
 	name: string;
 	userId: string;
 	course: string;
@@ -27,6 +29,9 @@ export default function CheckInPage() {
 	const [error, setError] = useState<string | null>(null);
 	const [showDialog, setShowDialog] = useState(false);
 	const [showScanner, setShowScanner] = useState(false);
+	const [showSuccessAlert, setShowSuccessAlert] = useState(false);
+	const [checkedInUserName, setCheckedInUserName] = useState('');
+	const [scanner, setScanner] = useState<Html5QrcodeScanner | null>(null);
 
 	useEffect(() => {
 		if (!showScanner) return;
@@ -36,6 +41,7 @@ export default function CheckInPage() {
 			{ fps: 10, qrbox: { width: 250, height: 250 } },
 			false
 		);
+		setScanner(qrScanner);
 
 		qrScanner.render(onScanSuccess, onScanFailure);
 
@@ -85,7 +91,7 @@ export default function CheckInPage() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ userId: userInfo.userId }),
+				body: JSON.stringify({ userId: userInfo._id }),
 			});
 
 			const data = await response.json();
@@ -93,7 +99,8 @@ export default function CheckInPage() {
 			if (data.success) {
 				setError(null);
 				setShowDialog(false);
-				// Optionally show success message
+				setCheckedInUserName(userInfo.name);
+				setShowSuccessAlert(true);
 			} else {
 				setError(data.error);
 			}
@@ -155,45 +162,31 @@ export default function CheckInPage() {
 						</AlertDialogTitle>
 						<AlertDialogDescription>
 							{userInfo && (
-								<div className="space-y-3 mt-4 text-sm md:text-base">
-									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">
-											Name:
+								<>
+									<span className="block space-y-3 mt-4 text-sm md:text-base">
+										<span className="grid grid-cols-3 gap-2 items-center">
+											<span className="font-semibold text-right pr-4">Name:</span>
+											<span className="col-span-2">{userInfo.name}</span>
 										</span>
-										<span className="col-span-2">
-											{userInfo.name}
+										<span className="grid grid-cols-3 gap-2 items-center">
+											<span className="font-semibold text-right pr-4">ID:</span>
+											<span className="col-span-2">{userInfo.userId}</span>
 										</span>
-									</div>
-									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">
-											ID:
+										<span className="grid grid-cols-3 gap-2 items-center">
+											<span className="font-semibold text-right pr-4">Course:</span>
+											<span className="col-span-2">{userInfo.course}</span>
 										</span>
-										<span className="col-span-2">
-											{userInfo.userId}
+										<span className="grid grid-cols-3 gap-2 items-center">
+											<span className="font-semibold text-right pr-4">Mobile:</span>
+											<span className="col-span-2">{userInfo.mobile}</span>
 										</span>
-									</div>
-									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">
-											Course:
-										</span>
-										<span className="col-span-2">
-											{userInfo.course}
-										</span>
-									</div>
-									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">
-											Mobile:
-										</span>
-										<span className="col-span-2">
-											{userInfo.mobile}
-										</span>
-									</div>
-									{userInfo.checkedIn && (
-										<div className="text-red-500 font-medium text-center py-2 bg-red-50 rounded-md mt-4">
-											User has already checked in!
-										</div>
-									)}
-								</div>
+										{userInfo.checkedIn && (
+											<span className="grid gap-2 items-center text-red-500 font-medium text-center py-2 bg-red-50 rounded-md mt-4">
+												User has already checked in!
+											</span>
+										)}
+									</span>
+								</>
 							)}
 						</AlertDialogDescription>
 					</AlertDialogHeader>
@@ -215,6 +208,18 @@ export default function CheckInPage() {
 					</AlertDialogFooter>
 				</AlertDialogContent>
 			</AlertDialog>
+
+			<CheckInSuccessAlert 
+				open={showSuccessAlert}
+				onClose={() => {
+					setShowSuccessAlert(false);
+					setUserInfo(null);
+					if (scanner) {
+						scanner.render(onScanSuccess, onScanFailure);
+					}
+				}}
+				userName={checkedInUserName}
+			/>
 		</div>
 	);
 }

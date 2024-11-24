@@ -1,15 +1,12 @@
 import { NextResponse } from 'next/server';
 import { connectDB } from '@/lib/mongodb';
 import { ApprovedUser } from '@/models/ApprovedUser';
-import { Registration } from '@/models/Registration';
-import { ObjectId } from 'mongodb';
 
 export async function POST(request: Request) {
 	try {
 		const { userId } = await request.json();
 		await connectDB();
 
-		// Check if user is approved
 		const approvedUser = await ApprovedUser.findOne({ userId });
 		if (!approvedUser) {
 			return NextResponse.json({
@@ -18,32 +15,29 @@ export async function POST(request: Request) {
 			});
 		}
 
-		// Get user details from registration
-		const registration = await Registration.findOne({
-			_id: ObjectId.createFromHexString(userId),
-		});
-		if (!registration) {
+		if (approvedUser.checkedIn) {
 			return NextResponse.json({
 				success: false,
-				error: 'Registration not found',
+				error: 'User has already checked in',
 			});
 		}
 
+		await ApprovedUser.updateOne(
+			{ userId },
+			{
+				checkedIn: true,
+				checkedInAt: new Date(),
+			}
+		);
+
 		return NextResponse.json({
 			success: true,
-			user: {
-				_id: userId,
-				name: registration.name,
-				userId: registration.userId,
-				course: registration.course,
-				mobile: registration.mobile,
-				checkedIn: approvedUser.checkedIn,
-			},
+			message: 'Check-in successful',
 		});
 	} catch (error) {
 		return NextResponse.json({
 			success: false,
-			error: `Failed to process check-in: ${error}`,
+			error: `Failed to confirm check-in: ${error}`,
 		});
 	}
 }
