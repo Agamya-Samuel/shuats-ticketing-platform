@@ -4,6 +4,7 @@ import { connectDB } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { Registration } from '@/models/Registration';
 import { sendApprovalEmail, sendRejectionEmail } from '@/actions/email';
+import { ApprovedUser } from '@/models/ApprovedUser';
 
 export async function getRegistrations() {
 	await connectDB();
@@ -25,9 +26,13 @@ export async function approveRegistration(id: string, adminUsername: string) {
 			},
 			{ new: true }
 		);
-		console.log('Registration approved');
 
 		if (registration) {
+			await ApprovedUser.create({
+				userId: registration.userId,
+				name: registration.name,
+			});
+
 			await sendApprovalEmail(
 				registration.name,
 				registration.email,
@@ -65,6 +70,8 @@ export async function rejectRegistration(id: string, adminUsername: string) {
 		);
 
 		if (registration) {
+			await ApprovedUser.deleteOne({ userId: registration.userId });
+
 			await sendRejectionEmail(
 				registration.name,
 				registration.email,
