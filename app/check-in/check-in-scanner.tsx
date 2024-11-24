@@ -208,7 +208,10 @@ export function CheckInScanner() {
 					</AlertDialogHeader>
 					<AlertDialogFooter className="mt-6 gap-3 sm:gap-0">
 						<AlertDialogCancel
-							onClick={() => setShowDialog(false)}
+							onClick={() => {
+								setShowDialog(false);
+								window.location.reload();
+							}}
 							className="w-full sm:w-auto"
 						>
 							Cancel
