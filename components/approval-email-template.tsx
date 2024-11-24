@@ -20,14 +20,12 @@ interface EmailTemplateProps {
 	course: string;
 	email: string;
 	mobile: string;
-	qrCodeDataUrl: string;
 }
 export const ApprovalEmailTemplate: React.FC<EmailTemplateProps> = ({
 	name,
 	course,
 	email,
 	mobile,
-	qrCodeDataUrl,
 }) => (
 	<Html>
 		<Head />
@@ -92,18 +90,8 @@ export const ApprovalEmailTemplate: React.FC<EmailTemplateProps> = ({
 							</Column>
 						</Row>
 						<Section style={qrCodeSection}>
-							<Heading as="h3" style={h3}>
-								Your Entry QR Code:
-							</Heading>
-							<Img
-								src={qrCodeDataUrl}
-								width="200"
-								height="200"
-								alt="Entry QR Code"
-								style={qrCodeStyle}
-							/>
-							<Text style={qrCodeText}>
-								Please show this QR code at the entrance
+							<Text style={text}>
+								Find the Event Ticket in the Email Attachment
 							</Text>
 						</Section>
 					</Section>
@@ -281,25 +269,4 @@ const qrCodeSection = {
 	padding: '20px',
 	backgroundColor: '#ffffff',
 	borderRadius: '4px',
-};
-
-const h3 = {
-	...h2,
-	fontSize: '18px',
-	marginBottom: '15px',
-};
-
-const qrCodeStyle = {
-	margin: '0 auto',
-	display: 'block',
-	border: '1px solid #e6ebf1',
-	padding: '10px',
-	backgroundColor: '#ffffff',
-};
-
-const qrCodeText = {
-	...text,
-	fontSize: '14px',
-	marginTop: '10px',
-	color: '#666666',
 };

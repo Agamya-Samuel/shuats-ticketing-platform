@@ -36,8 +36,7 @@ export async function sendApprovalEmail(
 				name,
 				course,
 				mobile,
-				email,
-				qrCodeDataUrl,
+				email
 			}),
 			attachments: [
 				{
