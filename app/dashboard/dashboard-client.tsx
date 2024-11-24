@@ -110,6 +110,7 @@ export function DashboardClient() {
 
 	const calculateCounts = (requests: Registration[]) => {
 		return {
+			total: requests.length,
 			pending: requests.filter(r => r.status === 'pending').length,
 			accepted: requests.filter(r => r.status === 'accepted').length,
 			rejected: requests.filter(r => r.status === 'rejected').length
@@ -124,9 +125,14 @@ export function DashboardClient() {
 
 	return (
 		<div className="container mx-auto p-4 max-w-7xl">
-			<h1 className="text-2xl font-bold mb-4">
-				{process.env.NEXT_PUBLIC_EVENT_NAME} Registration Requests
-			</h1>
+			<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4">
+				<h1 className="text-2xl font-bold">
+					{process.env.NEXT_PUBLIC_EVENT_NAME} Registration Requests
+				</h1>
+				<div className="text-2xl text-gray-600 mt-2 md:mt-0">
+					Total Registrations: <span className="font-semibold">{counts.total}</span>
+				</div>
+			</div>
 			<Tabs
 				defaultValue="pending"
 				className="mb-4"
