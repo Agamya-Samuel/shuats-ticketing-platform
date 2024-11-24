@@ -1,10 +1,10 @@
 'use server';
 
 import { Resend } from 'resend';
-import { EmailTemplate } from '@/components/email-template';
 import { generateQRCode } from '@/utils/qr-generator';
 import { generateTicketPDF } from '@/utils/pdf-generator';
-import { RejectionEmailTemplate } from '@/components/rejection-email-template';
+import ApprovalEmailTemplate from '@/components/approval-email-template';
+import RejectionEmailTemplate from '@/components/rejection-email-template';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -32,7 +32,7 @@ export async function sendApprovalEmail(
 			from: `${process.env.NEXT_PUBLIC_EVENT_NAME} - Agamya Ticketing Platform <admin@ticketing.agamya.dev>`,
 			to: [email],
 			subject: `${process.env.NEXT_PUBLIC_EVENT_NAME} Registration Approved, Download your ticket now!`,
-			react: EmailTemplate({
+			react: ApprovalEmailTemplate({
 				name,
 				course,
 				mobile,
@@ -60,7 +60,7 @@ export async function sendApprovalEmail(
 export async function sendRejectionEmail(
 	name: string,
 	email: string,
-	course: string,
+	course: string
 ) {
 	try {
 		const data = await resend.emails.send({

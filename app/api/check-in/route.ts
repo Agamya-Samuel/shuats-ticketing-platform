@@ -9,7 +9,7 @@ export async function POST(request: Request) {
 		await connectDB();
 
 		// Check if user is approved
-		const approvedUser = await ApprovedUser.findOne({ userId });
+		const approvedUser = await ApprovedUser.findOne({ userId: userId });
 		if (!approvedUser) {
 			return NextResponse.json({
 				success: false,
@@ -39,7 +39,7 @@ export async function POST(request: Request) {
 	} catch (error) {
 		return NextResponse.json({
 			success: false,
-			error: error.message || 'Failed to process check-in',
+			error: `Failed to process check-in: ${error}`,
 		});
 	}
 }

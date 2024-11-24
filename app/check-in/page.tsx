@@ -33,7 +33,7 @@ export default function CheckInPage() {
 
 		const qrScanner = new Html5QrcodeScanner(
 			'reader',
-			{ fps: 10, qrbox: { width: 500, height: 500 } },
+			{ fps: 10, qrbox: { width: 250, height: 250 } },
 			false
 		);
 
@@ -104,12 +104,16 @@ export default function CheckInPage() {
 
 	const handleStartScanning = async () => {
 		try {
-			const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-			stream.getTracks().forEach(track => track.stop());
+			const stream = await navigator.mediaDevices.getUserMedia({
+				video: true,
+			});
+			stream.getTracks().forEach((track) => track.stop());
 			setShowScanner(true);
 			setError(null);
 		} catch (err) {
-			setError(`Camera permission denied. Please allow camera access and try again. ${err}`);
+			setError(
+				`Camera permission denied. Please allow camera access and try again. ${err}`
+			);
 		}
 	};
 
@@ -120,28 +124,31 @@ export default function CheckInPage() {
 			</h1>
 
 			{error && (
-				<div className="w-full max-w-[500px] bg-red-100 text-red-600 p-4 rounded-lg mb-6 text-center text-sm md:text-base">
+				<div className="w-full max-w-[700px] bg-red-100 text-red-600 p-4 rounded-lg mb-6 text-center text-sm md:text-base">
 					{error}
 				</div>
 			)}
 
 			{!showScanner ? (
 				<div className="flex justify-center mb-6">
-					<Button 
+					<Button
 						onClick={handleStartScanning}
-						className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-lg text-lg"
+						className="bg-blue-700 hover:bg-blue-800 text-white px-8 py-4 rounded-md text-lg"
 					>
 						Start Camera Scanner
 					</Button>
 				</div>
 			) : (
-				<div className="w-full max-w-[500px] mb-6">
-					<div id="reader" className="overflow-hidden rounded-lg shadow-md"></div>
+				<div className="w-full max-w-[700px] mb-6">
+					<div
+						id="reader"
+						className="overflow-hidden rounded-lg shadow-md"
+					></div>
 				</div>
 			)}
 
 			<AlertDialog open={showDialog}>
-				<AlertDialogContent className="max-w-[90vw] md:max-w-[500px]">
+				<AlertDialogContent className="max-w-[90vw] md:max-w-[700px]">
 					<AlertDialogHeader>
 						<AlertDialogTitle className="text-xl md:text-2xl text-center">
 							Confirm Check-in
@@ -150,20 +157,36 @@ export default function CheckInPage() {
 							{userInfo && (
 								<div className="space-y-3 mt-4 text-sm md:text-base">
 									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">Name:</span>
-										<span className="col-span-2">{userInfo.name}</span>
+										<span className="font-semibold text-right pr-4">
+											Name:
+										</span>
+										<span className="col-span-2">
+											{userInfo.name}
+										</span>
 									</div>
 									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">ID:</span>
-										<span className="col-span-2">{userInfo.userId}</span>
+										<span className="font-semibold text-right pr-4">
+											ID:
+										</span>
+										<span className="col-span-2">
+											{userInfo.userId}
+										</span>
 									</div>
 									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">Course:</span>
-										<span className="col-span-2">{userInfo.course}</span>
+										<span className="font-semibold text-right pr-4">
+											Course:
+										</span>
+										<span className="col-span-2">
+											{userInfo.course}
+										</span>
 									</div>
 									<div className="grid grid-cols-3 gap-2 items-center">
-										<span className="font-semibold text-right pr-4">Mobile:</span>
-										<span className="col-span-2">{userInfo.mobile}</span>
+										<span className="font-semibold text-right pr-4">
+											Mobile:
+										</span>
+										<span className="col-span-2">
+											{userInfo.mobile}
+										</span>
 									</div>
 									{userInfo.checkedIn && (
 										<div className="text-red-500 font-medium text-center py-2 bg-red-50 rounded-md mt-4">
@@ -175,14 +198,14 @@ export default function CheckInPage() {
 						</AlertDialogDescription>
 					</AlertDialogHeader>
 					<AlertDialogFooter className="mt-6 gap-3 sm:gap-0">
-						<AlertDialogCancel 
+						<AlertDialogCancel
 							onClick={() => setShowDialog(false)}
 							className="w-full sm:w-auto"
 						>
 							Cancel
 						</AlertDialogCancel>
 						{!userInfo?.checkedIn && (
-							<AlertDialogAction 
+							<AlertDialogAction
 								onClick={handleCheckIn}
 								className="w-full sm:w-auto bg-blue-700 hover:bg-blue-800"
 							>

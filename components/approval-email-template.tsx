@@ -22,7 +22,7 @@ interface EmailTemplateProps {
 	mobile: string;
 	qrCodeDataUrl: string;
 }
-export const EmailTemplate: React.FC<EmailTemplateProps> = ({
+export const ApprovalEmailTemplate: React.FC<EmailTemplateProps> = ({
 	name,
 	course,
 	email,
@@ -153,7 +153,7 @@ export const EmailTemplate: React.FC<EmailTemplateProps> = ({
 	</Html>
 );
 
-export default EmailTemplate;
+export default ApprovalEmailTemplate;
 
 const main = {
 	backgroundColor: '#f6f9fc',
@@ -177,7 +177,7 @@ const logoContainer = {
 };
 
 const headerSection = {
-	backgroundColor: '#4F46E5',
+	backgroundColor: '#22c55e',
 	padding: '30px 0',
 	borderTopLeftRadius: '5px',
 	borderTopRightRadius: '5px',
