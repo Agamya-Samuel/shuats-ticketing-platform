@@ -4,6 +4,7 @@ import { Resend } from 'resend';
 import { EmailTemplate } from '@/components/email-template';
 import { generateQRCode } from '@/utils/qr-generator';
 import { generateTicketPDF } from '@/utils/pdf-generator';
+import { RejectionEmailTemplate } from '@/components/rejection-email-template';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -52,6 +53,30 @@ export async function sendApprovalEmail(
 		return { success: true, data };
 	} catch (error) {
 		console.error('Failed to send email:', error);
+		return { success: false, error };
+	}
+}
+
+export async function sendRejectionEmail(
+	name: string,
+	email: string,
+	course: string,
+) {
+	try {
+		const data = await resend.emails.send({
+			from: `${process.env.NEXT_PUBLIC_EVENT_NAME} - Agamya Ticketing Platform <admin@ticketing.agamya.dev>`,
+			to: [email],
+			subject: `${process.env.NEXT_PUBLIC_EVENT_NAME} Registration Status Update`,
+			react: RejectionEmailTemplate({
+				name,
+				course,
+			}),
+		});
+		console.log('Rejection email sent successfully');
+
+		return { success: true, data };
+	} catch (error) {
+		console.error('Failed to send rejection email:', error);
 		return { success: false, error };
 	}
 }

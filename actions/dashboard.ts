@@ -3,7 +3,7 @@
 import { connectDB } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { Registration } from '@/models/Registration';
-import { sendApprovalEmail } from '@/actions/email';
+import { sendApprovalEmail, sendRejectionEmail } from '@/actions/email';
 
 export async function getRegistrations() {
 	await connectDB();
@@ -63,6 +63,14 @@ export async function rejectRegistration(id: string, adminUsername: string) {
 			},
 			{ new: true }
 		);
+
+		if (registration) {
+			await sendRejectionEmail(
+				registration.name,
+				registration.email,
+				registration.course
+			);
+		}
 
 		revalidatePath('/dashboard');
 		return {
