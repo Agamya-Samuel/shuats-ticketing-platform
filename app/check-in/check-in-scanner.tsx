@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { CheckInSuccessAlert } from '@/components/check-in-success-alert';
+import { useSession } from 'next-auth/react';
 
 interface UserInfo {
 	_id: string;
@@ -25,6 +26,7 @@ interface UserInfo {
 }
 
 export function CheckInScanner() {
+	const { data: session } = useSession();
 	const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
 	const [error, setError] = useState<string | null>(null);
 	const [showDialog, setShowDialog] = useState(false);
@@ -91,7 +93,10 @@ export function CheckInScanner() {
 				headers: {
 					'Content-Type': 'application/json',
 				},
-				body: JSON.stringify({ userId: userInfo._id }),
+				body: JSON.stringify({ 
+					userId: userInfo._id,
+					checkedInBy: session?.user?.username || 'unknown'
+				}),
 			});
 
 			const data = await response.json();

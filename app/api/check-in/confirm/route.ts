@@ -4,7 +4,7 @@ import { ApprovedUser } from '@/models/ApprovedUser';
 
 export async function POST(request: Request) {
 	try {
-		const { userId } = await request.json();
+		const { userId, checkedInBy } = await request.json();
 		await connectDB();
 
 		const approvedUser = await ApprovedUser.findOne({ userId });
@@ -27,6 +27,7 @@ export async function POST(request: Request) {
 			{
 				checkedIn: true,
 				checkedInAt: new Date(),
+				checkedInBy: checkedInBy
 			}
 		);
 

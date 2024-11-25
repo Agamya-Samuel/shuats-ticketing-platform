@@ -8,7 +8,7 @@ import { Providers } from '@/app/providers';
 
 export default async function AdminDashboard() {
 	const session = await auth();
-
+	
 	if (!session) {
 		redirect('/admin/login');
 	}

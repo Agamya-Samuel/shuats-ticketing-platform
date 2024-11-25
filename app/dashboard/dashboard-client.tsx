@@ -17,6 +17,7 @@ import {
 	getRegistrations,
 	approveRegistration,
 	rejectRegistration,
+	uncheckInUser,
 } from '@/actions/dashboard';
 import { LoadingSkeleton } from '@/app/dashboard/loading-skeleton';
 import { useSession } from 'next-auth/react';
@@ -34,6 +35,9 @@ interface Registration {
 	rejectedBy?: string;
 	rejectedOn?: string;
 	userId: string;
+	checkedIn?: boolean;
+	checkedInAt?: string;
+	checkedInBy?: string;
 }
 
 export function DashboardClient() {
@@ -62,15 +66,18 @@ export function DashboardClient() {
 		setSearchTerm(event.target.value);
 	};
 
-	const filteredRequests = requests.filter(
-		(request) =>
-			(request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-				request.email
-					.toLowerCase()
-					.includes(searchTerm.toLowerCase()) ||
-				request.mobile.includes(searchTerm)) &&
-			request.status === activeTab
-	);
+	const filteredRequests = requests.filter((request) => {
+		const searchMatches =
+			request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			request.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			request.mobile.includes(searchTerm);
+
+		if (activeTab === 'checkedIn') {
+			return searchMatches && request.checkedIn;
+		}
+
+		return searchMatches && request.status === activeTab;
+	});
 
 	const handleApprove = async (id: string) => {
 		try {
@@ -108,12 +115,28 @@ export function DashboardClient() {
 		}
 	};
 
+	const handleUncheckIn = async (id: string) => {
+		try {
+			const result = await uncheckInUser(id);
+			if (result.success) {
+				const updatedRequests = await getRegistrations();
+				setRequests(updatedRequests);
+				console.log('User unchecked-in successfully');
+			} else {
+				throw new Error(result.error);
+			}
+		} catch (error) {
+			console.error('Error unchecking-in user:', error);
+		}
+	};
+
 	const calculateCounts = (requests: Registration[]) => {
 		return {
 			total: requests.length,
-			pending: requests.filter(r => r.status === 'pending').length,
-			accepted: requests.filter(r => r.status === 'accepted').length,
-			rejected: requests.filter(r => r.status === 'rejected').length
+			pending: requests.filter((r) => r.status === 'pending').length,
+			accepted: requests.filter((r) => r.status === 'accepted').length,
+			rejected: requests.filter((r) => r.status === 'rejected').length,
+			checkedIn: requests.filter((r) => r.checkedIn).length,
 		};
 	};
 
@@ -130,7 +153,8 @@ export function DashboardClient() {
 					{process.env.NEXT_PUBLIC_EVENT_NAME} Registration Requests
 				</h1>
 				<div className="text-2xl text-gray-600 mt-2 md:mt-0">
-					Total Registrations: <span className="font-semibold">{counts.total}</span>
+					Total Registrations:{' '}
+					<span className="font-semibold">{counts.total}</span>
 				</div>
 			</div>
 			<Tabs
@@ -138,7 +162,7 @@ export function DashboardClient() {
 				className="mb-4"
 				onValueChange={(value) => setActiveTab(value)}
 			>
-				<TabsList className="grid w-full grid-cols-3 bg-slate-200">
+				<TabsList className="grid w-full grid-cols-4 bg-slate-200">
 					<TabsTrigger value="pending">
 						Pending ({counts.pending})
 					</TabsTrigger>
@@ -147,6 +171,9 @@ export function DashboardClient() {
 					</TabsTrigger>
 					<TabsTrigger value="rejected">
 						Rejected ({counts.rejected})
+					</TabsTrigger>
+					<TabsTrigger value="checkedIn">
+						Checked In ({counts.checkedIn})
 					</TabsTrigger>
 				</TabsList>
 			</Tabs>
@@ -168,7 +195,7 @@ export function DashboardClient() {
 					<Table>
 						<TableHeader>
 							<TableRow>
-								<TableHead className="w-[150px] text-lg font-semibold">
+								<TableHead className="w-[150px] font-semibold">
 									Name
 								</TableHead>
 								<TableHead className="w-[120px] font-semibold">
@@ -183,26 +210,13 @@ export function DashboardClient() {
 								<TableHead className="w-[120px] font-semibold">
 									Mobile
 								</TableHead>
-								<TableHead className="w-[100px] font-semibold">
-									Money Paid
-								</TableHead>
-								{activeTab === 'accepted' && (
+								{activeTab === 'checkedIn' && (
 									<>
-										<TableHead className="w-[120px] font-semibold">
-											Approved By
+										<TableHead className="w-[150px] font-semibold">
+											Checked In At
 										</TableHead>
-										<TableHead className="w-[120px] font-semibold">
-											Approved On
-										</TableHead>
-									</>
-								)}
-								{activeTab === 'rejected' && (
-									<>
-										<TableHead className="w-[120px] font-semibold">
-											Rejected By
-										</TableHead>
-										<TableHead className="w-[120px] font-semibold">
-											Rejected On
+										<TableHead className="w-[150px] font-semibold">
+											Checked In By
 										</TableHead>
 									</>
 								)}
@@ -221,28 +235,30 @@ export function DashboardClient() {
 									<TableCell>{request.course}</TableCell>
 									<TableCell>{request.email}</TableCell>
 									<TableCell>{request.mobile}</TableCell>
-									<TableCell>₹{request.moneyPaid}</TableCell>
-									{activeTab === 'accepted' && (
+									{activeTab === 'checkedIn' && (
 										<>
 											<TableCell>
-												{request.approvedBy}
+												{request.checkedInAt ? new Date(request.checkedInAt).toLocaleString() : ''}
 											</TableCell>
 											<TableCell>
-												{request.approvedOn}
-											</TableCell>
-										</>
-									)}
-									{activeTab === 'rejected' && (
-										<>
-											<TableCell>
-												{request.rejectedBy}
-											</TableCell>
-											<TableCell>
-												{request.rejectedOn}
+												{request.checkedInBy}
 											</TableCell>
 										</>
 									)}
 									<TableCell>
+										{activeTab === 'checkedIn' && (
+											<Button
+												onClick={() => handleUncheckIn(request._id)}
+												size="sm"
+												className="bg-red-500 hover:bg-red-600"
+											>
+												<XCircle
+														className="mr-1"
+														size={16}
+													/>
+												Uncheck In
+											</Button>
+										)}
 										{activeTab === 'pending' && (
 											<div className="flex space-x-2">
 												<Button

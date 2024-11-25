@@ -18,6 +18,10 @@ const approvedUserSchema = new mongoose.Schema({
 		type: Date,
 		default: null,
 	},
+	checkedInBy: {
+		type: String,
+		default: null,
+	},
 	approvedAt: {
 		type: Date,
 		default: Date.now,
