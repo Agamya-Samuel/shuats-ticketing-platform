@@ -3,7 +3,7 @@
 import { connectDB } from '@/lib/mongodb';
 import { revalidatePath } from 'next/cache';
 import { Registration } from '@/models/Registration';
-// import { sendApprovalEmail, sendRejectionEmail } from '@/actions/email';
+import { sendApprovalEmail, sendRejectionEmail } from '@/actions/email';
 import { ApprovedUser } from '@/models/ApprovedUser';
 
 export async function getRegistrations() {
@@ -47,14 +47,14 @@ export async function approveRegistration(id: string, adminUsername: string) {
 				name: registration.name,
 			});
 
-			// await sendApprovalEmail(
-			// 	registration.name,
-			// 	registration.email,
-			// 	registration.userId,
-			// 	registration.course,
-			// 	registration.mobile,
-			// 	registration._id.toString()
-			// );
+			await sendApprovalEmail(
+				registration.name,
+				registration.email,
+				registration.userId,
+				registration.course,
+				registration.mobile,
+				registration._id.toString()
+			);
 		}
 
 		revalidatePath('/dashboard');
@@ -88,11 +88,11 @@ export async function rejectRegistration(id: string, adminUsername: string) {
 				userId: registration._id.toString(),
 			});
 
-				// await sendRejectionEmail(
-				// 	registration.name,
-				// 	registration.email,
-				// 	registration.course
-				// );
+				await sendRejectionEmail(
+					registration.name,
+					registration.email,
+					registration.course
+				);
 		}
 
 		revalidatePath('/dashboard');
