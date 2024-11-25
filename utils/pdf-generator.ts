@@ -86,6 +86,17 @@ export async function generateTicketPDF(
 			currentY -= 30;
 		}
 
+		// Add warning message
+		currentY -= 30;
+		const warningText = "WARNING: Don't share this Ticket QR with anyone, or you will not get entry";
+		page.drawText(warningText, {
+			x: centerX - helvetica.widthOfTextAtSize(warningText, 12) / 2,
+			y: currentY,
+			font: helveticaBold,
+			size: 12,
+			color: rgb(1, 0, 0), // Red color for warning
+		});
+
 		// Add footer
 		currentY -= 30;
 		const footerText =
