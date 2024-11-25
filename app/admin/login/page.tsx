@@ -13,15 +13,18 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { AnimatedBackground } from '@/components/animated-background';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 export default function LoginPage() {
 	const [username, setUsername] = useState('');
 	const [password, setPassword] = useState('');
 	const [error, setError] = useState('');
 	const router = useRouter();
+	const [isLoggingIn, setIsLoggingIn] = useState(false);
 
 	const handleSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
+		setIsLoggingIn(true);
 
 		try {
 			const result = await signIn('credentials', {
@@ -45,6 +48,8 @@ export default function LoginPage() {
 		} catch (err) {
 			setError('An error occurred during authentication');
 			console.error('Authentication error:', err);
+		} finally {
+			setIsLoggingIn(false);
 		}
 	};
 
@@ -97,8 +102,13 @@ export default function LoginPage() {
 						<Button
 							type="submit"
 							className="w-full bg-blue-700 hover:bg-purple-700"
+							disabled={isLoggingIn}
 						>
-							Login
+							{isLoggingIn ? (
+								<LoadingSpinner />
+							) : (
+								"Login"
+							)}
 						</Button>
 					</form>
 				</CardContent>

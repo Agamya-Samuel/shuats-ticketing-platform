@@ -15,6 +15,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { CheckInSuccessAlert } from '@/components/check-in-success-alert';
 import { useSession } from 'next-auth/react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface UserInfo {
 	_id: string;
@@ -34,6 +35,7 @@ export function CheckInScanner() {
 	const [showSuccessAlert, setShowSuccessAlert] = useState(false);
 	const [checkedInUserName, setCheckedInUserName] = useState('');
 	const [scanner, setScanner] = useState<Html5QrcodeScanner | null>(null);
+	const [isCheckingIn, setIsCheckingIn] = useState(false);
 
 	useEffect(() => {
 		if (!showScanner) return;
@@ -88,6 +90,7 @@ export function CheckInScanner() {
 		if (!userInfo) return;
 
 		try {
+			setIsCheckingIn(true);
 			const response = await fetch('/api/check-in/confirm', {
 				method: 'POST',
 				headers: {
@@ -111,6 +114,8 @@ export function CheckInScanner() {
 			}
 		} catch (error) {
 			setError(`Failed to check in user: ${error}`);
+		} finally {
+			setIsCheckingIn(false);
 		}
 	};
 
@@ -225,8 +230,13 @@ export function CheckInScanner() {
 							<AlertDialogAction
 								onClick={handleCheckIn}
 								className="w-full sm:w-auto bg-blue-700 hover:bg-blue-800"
+								disabled={isCheckingIn}
 							>
-								Check In
+								{isCheckingIn ? (
+									<LoadingSpinner />
+								) : (
+									"Check In"
+								)}
 							</AlertDialogAction>
 						)}
 					</AlertDialogFooter>

@@ -21,6 +21,7 @@ import {
 } from '@/actions/dashboard';
 import { LoadingSkeleton } from '@/app/dashboard/loading-skeleton';
 import { useSession } from 'next-auth/react';
+import { LoadingSpinner } from '@/components/ui/loading-spinner';
 
 interface Registration {
 	_id: string;
@@ -46,6 +47,8 @@ export function DashboardClient() {
 	const [searchTerm, setSearchTerm] = useState('');
 	const [activeTab, setActiveTab] = useState('pending');
 	const [isLoading, setIsLoading] = useState(true);
+	const [loadingAction, setLoadingAction] = useState<string | null>(null);
+	const [loadingUncheckIn, setLoadingUncheckIn] = useState<string | null>(null);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -81,6 +84,7 @@ export function DashboardClient() {
 
 	const handleApprove = async (id: string) => {
 		try {
+			setLoadingAction(id + '_approve');
 			const result = await approveRegistration(
 				id,
 				session?.user?.username || ''
@@ -94,11 +98,14 @@ export function DashboardClient() {
 			}
 		} catch (error) {
 			console.error('Error approving registration:', error);
+		} finally {
+			setLoadingAction(null);
 		}
 	};
 
 	const handleReject = async (id: string) => {
 		try {
+			setLoadingAction(id + '_reject');
 			const result = await rejectRegistration(
 				id,
 				session?.user?.username || ''
@@ -112,11 +119,14 @@ export function DashboardClient() {
 			}
 		} catch (error) {
 			console.error('Error rejecting registration:', error);
+		} finally {
+			setLoadingAction(null);
 		}
 	};
 
 	const handleUncheckIn = async (id: string) => {
 		try {
+			setLoadingUncheckIn(id);
 			const result = await uncheckInUser(id);
 			if (result.success) {
 				const updatedRequests = await getRegistrations();
@@ -127,16 +137,18 @@ export function DashboardClient() {
 			}
 		} catch (error) {
 			console.error('Error unchecking-in user:', error);
+		} finally {
+			setLoadingUncheckIn(null);
 		}
 	};
 
 	const calculateCounts = (requests: Registration[]) => {
 		return {
 			total: requests.length,
-			pending: requests.filter((r) => r.status === 'pending').length,
-			accepted: requests.filter((r) => r.status === 'accepted').length,
-			rejected: requests.filter((r) => r.status === 'rejected').length,
-			checkedIn: requests.filter((r) => r.checkedIn).length,
+				pending: requests.filter((r) => r.status === 'pending').length,
+				accepted: requests.filter((r) => r.status === 'accepted').length,
+				rejected: requests.filter((r) => r.status === 'rejected').length,
+				checkedIn: requests.filter((r) => r.checkedIn).length,
 		};
 	};
 
@@ -251,11 +263,16 @@ export function DashboardClient() {
 												onClick={() => handleUncheckIn(request._id)}
 												size="sm"
 												className="bg-red-500 hover:bg-red-600"
+												disabled={loadingUncheckIn === request._id}
 											>
-												<XCircle
+												{loadingUncheckIn === request._id ? (
+													<LoadingSpinner />
+												) : (
+													<XCircle
 														className="mr-1"
 														size={16}
 													/>
+												)}
 												Uncheck In
 											</Button>
 										)}
@@ -269,11 +286,16 @@ export function DashboardClient() {
 													}
 													size="sm"
 													className="bg-green-500 hover:bg-green-600"
+													disabled={loadingAction === request._id + '_approve'}
 												>
-													<CheckCircle
-														className="mr-1"
-														size={16}
-													/>
+													{loadingAction === request._id + '_approve' ? (
+														<LoadingSpinner />
+													) : (
+														<CheckCircle
+															className="mr-1"
+															size={16}
+														/>
+													)}
 													Approve
 												</Button>
 												<Button
@@ -284,42 +306,47 @@ export function DashboardClient() {
 													}
 													size="sm"
 													className="bg-red-500 hover:bg-red-600"
+													disabled={loadingAction === request._id + '_reject'}
 												>
-													<XCircle
-														className="mr-1"
-														size={16}
-													/>
+													{loadingAction === request._id + '_reject' ? (
+														<LoadingSpinner />
+													) : (
+														<XCircle
+															className="mr-1"
+															size={16}
+														/>
+													)}
 													Reject
 												</Button>
 											</div>
 										)}
 										{activeTab === 'accepted' && (
 											<Button
-												onClick={() =>
-													handleReject(request._id)
-												}
+												onClick={() => handleReject(request._id)}
 												size="sm"
 												className="bg-red-500 hover:bg-red-600"
+												disabled={loadingAction === request._id + '_reject'}
 											>
-												<XCircle
-													className="mr-1"
-													size={16}
-												/>
+												{loadingAction === request._id + '_reject' ? (
+													<LoadingSpinner />
+												) : (
+													<XCircle className="mr-1" size={16} />
+												)}
 												Reject
 											</Button>
 										)}
 										{activeTab === 'rejected' && (
 											<Button
-												onClick={() =>
-													handleApprove(request._id)
-												}
+												onClick={() => handleApprove(request._id)}
 												size="sm"
 												className="bg-green-500 hover:bg-green-600"
+												disabled={loadingAction === request._id + '_approve'}
 											>
-												<CheckCircle
-													className="mr-1"
-													size={16}
-												/>
+												{loadingAction === request._id + '_approve' ? (
+													<LoadingSpinner />
+												) : (
+													<CheckCircle className="mr-1" size={16} />
+												)}
 												Approve
 											</Button>
 										)}
