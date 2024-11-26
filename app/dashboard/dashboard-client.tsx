@@ -48,7 +48,9 @@ export function DashboardClient() {
 	const [activeTab, setActiveTab] = useState('pending');
 	const [isLoading, setIsLoading] = useState(true);
 	const [loadingAction, setLoadingAction] = useState<string | null>(null);
-	const [loadingUncheckIn, setLoadingUncheckIn] = useState<string | null>(null);
+	const [loadingUncheckIn, setLoadingUncheckIn] = useState<string | null>(
+		null
+	);
 
 	useEffect(() => {
 		const fetchData = async () => {
@@ -80,6 +82,17 @@ export function DashboardClient() {
 		}
 
 		return searchMatches && request.status === activeTab;
+	}).sort((a, b) => {
+		if (activeTab === 'accepted' && a.approvedOn && b.approvedOn) {
+			return new Date(b.approvedOn).getTime() - new Date(a.approvedOn).getTime();
+		}
+		if (activeTab === 'rejected' && a.rejectedOn && b.rejectedOn) {
+			return new Date(b.rejectedOn).getTime() - new Date(a.rejectedOn).getTime();
+		}
+		if (activeTab === 'checkedIn' && a.checkedInAt && b.checkedInAt) {
+			return new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime();
+		}
+		return 0;
 	});
 
 	const handleApprove = async (id: string) => {
@@ -145,10 +158,10 @@ export function DashboardClient() {
 	const calculateCounts = (requests: Registration[]) => {
 		return {
 			total: requests.length,
-				pending: requests.filter((r) => r.status === 'pending').length,
-				accepted: requests.filter((r) => r.status === 'accepted').length,
-				rejected: requests.filter((r) => r.status === 'rejected').length,
-				checkedIn: requests.filter((r) => r.checkedIn).length,
+			pending: requests.filter((r) => r.status === 'pending').length,
+			accepted: requests.filter((r) => r.status === 'accepted').length,
+			rejected: requests.filter((r) => r.status === 'rejected').length,
+			checkedIn: requests.filter((r) => r.checkedIn).length,
 		};
 	};
 
@@ -232,6 +245,26 @@ export function DashboardClient() {
 										</TableHead>
 									</>
 								)}
+								{activeTab === 'accepted' && (
+									<>
+										<TableHead className="w-[150px] font-semibold">
+											Approved By
+										</TableHead>
+										<TableHead className="w-[150px] font-semibold">
+											Approved On
+										</TableHead>
+									</>
+								)}
+								{activeTab === 'rejected' && (
+									<>
+										<TableHead className="w-[150px] font-semibold">
+											Rejected By
+										</TableHead>
+										<TableHead className="w-[150px] font-semibold">
+											Rejected On
+										</TableHead>
+									</>
+								)}
 								<TableHead className="w-[120px] font-semibold">
 									Actions
 								</TableHead>
@@ -250,22 +283,93 @@ export function DashboardClient() {
 									{activeTab === 'checkedIn' && (
 										<>
 											<TableCell>
-												{request.checkedInAt ? new Date(request.checkedInAt).toLocaleString() : ''}
+												{request.checkedInAt
+													? new Date(
+															request.checkedInAt
+													  ).toLocaleString(
+															'en-UK',
+															{
+																day: '2-digit',
+																month: 'short',
+																year: '2-digit',
+																hour: '2-digit',
+																minute: '2-digit',
+																second: '2-digit',
+																hour12: true,
+															}
+													  )
+													: ''}
 											</TableCell>
 											<TableCell>
 												{request.checkedInBy}
 											</TableCell>
 										</>
 									)}
+									{activeTab === 'accepted' && (
+										<>
+											<TableCell>
+												{request.approvedBy}
+											</TableCell>
+											<TableCell>
+												{request.approvedOn
+													? new Date(
+															request.approvedOn
+													  ).toLocaleString(
+															'en-US',
+															{
+																day: '2-digit',
+																month: 'short',
+																year: '2-digit',
+																hour: '2-digit',
+																minute: '2-digit',
+																second: '2-digit',
+																hour12: true,
+															}
+													  )
+													: ''}
+											</TableCell>
+										</>
+									)}
+									{activeTab === 'rejected' && (
+										<>
+											<TableCell>
+												{request.rejectedBy}
+											</TableCell>
+											<TableCell>
+												{request.rejectedOn
+													? new Date(
+															request.rejectedOn
+													  ).toLocaleString(
+															'en-UK',
+															{
+																day: '2-digit',
+																month: 'short',
+																year: '2-digit',
+																hour: '2-digit',
+																minute: '2-digit',
+																second: '2-digit',
+																hour12: true,
+															}
+													  )
+													: ''}
+											</TableCell>
+										</>
+									)}
 									<TableCell>
 										{activeTab === 'checkedIn' && (
 											<Button
-												onClick={() => handleUncheckIn(request._id)}
+												onClick={() =>
+													handleUncheckIn(request._id)
+												}
 												size="sm"
 												className="bg-red-500 hover:bg-red-600"
-												disabled={loadingUncheckIn === request._id}
+												disabled={
+													loadingUncheckIn ===
+													request._id
+												}
 											>
-												{loadingUncheckIn === request._id ? (
+												{loadingUncheckIn ===
+												request._id ? (
 													<LoadingSpinner />
 												) : (
 													<XCircle
@@ -286,9 +390,13 @@ export function DashboardClient() {
 													}
 													size="sm"
 													className="bg-green-500 hover:bg-green-600"
-													disabled={loadingAction === request._id + '_approve'}
+													disabled={
+														loadingAction ===
+														request._id + '_approve'
+													}
 												>
-													{loadingAction === request._id + '_approve' ? (
+													{loadingAction ===
+													request._id + '_approve' ? (
 														<LoadingSpinner />
 													) : (
 														<CheckCircle
@@ -306,9 +414,13 @@ export function DashboardClient() {
 													}
 													size="sm"
 													className="bg-red-500 hover:bg-red-600"
-													disabled={loadingAction === request._id + '_reject'}
+													disabled={
+														loadingAction ===
+														request._id + '_reject'
+													}
 												>
-													{loadingAction === request._id + '_reject' ? (
+													{loadingAction ===
+													request._id + '_reject' ? (
 														<LoadingSpinner />
 													) : (
 														<XCircle
@@ -322,30 +434,48 @@ export function DashboardClient() {
 										)}
 										{activeTab === 'accepted' && (
 											<Button
-												onClick={() => handleReject(request._id)}
+												onClick={() =>
+													handleReject(request._id)
+												}
 												size="sm"
 												className="bg-red-500 hover:bg-red-600"
-												disabled={loadingAction === request._id + '_reject'}
+												disabled={
+													loadingAction ===
+													request._id + '_reject'
+												}
 											>
-												{loadingAction === request._id + '_reject' ? (
+												{loadingAction ===
+												request._id + '_reject' ? (
 													<LoadingSpinner />
 												) : (
-													<XCircle className="mr-1" size={16} />
+													<XCircle
+														className="mr-1"
+														size={16}
+													/>
 												)}
 												Reject
 											</Button>
 										)}
 										{activeTab === 'rejected' && (
 											<Button
-												onClick={() => handleApprove(request._id)}
+												onClick={() =>
+													handleApprove(request._id)
+												}
 												size="sm"
 												className="bg-green-500 hover:bg-green-600"
-												disabled={loadingAction === request._id + '_approve'}
+												disabled={
+													loadingAction ===
+													request._id + '_approve'
+												}
 											>
-												{loadingAction === request._id + '_approve' ? (
+												{loadingAction ===
+												request._id + '_approve' ? (
 													<LoadingSpinner />
 												) : (
-													<CheckCircle className="mr-1" size={16} />
+													<CheckCircle
+														className="mr-1"
+														size={16}
+													/>
 												)}
 												Approve
 											</Button>
