@@ -82,7 +82,7 @@ export function CheckInScanner() {
 
 	const onScanFailure = (errorMessage: string) => {
 		if (!errorMessage.includes('NotFoundException')) {
-			setError('Unable to scan QR code. Please try again.');
+			setError('No QR code found. Please scan the QR code again.');
 		}
 	};
 
