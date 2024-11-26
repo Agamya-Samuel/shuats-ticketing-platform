@@ -9,7 +9,7 @@ export default async function CheckInPage() {
 	const session = await auth();
 
 	if (!session) {
-		redirect('/admin/login');
+		redirect('/admin/login?redirectTo=/check-in');
 	}
 
 	return (
