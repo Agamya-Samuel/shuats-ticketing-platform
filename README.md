@@ -87,14 +87,59 @@ yarn dev
 - MongoDB database
 - Email service provider (Resend)
 
-## 📚 Documentation
+## 📚 Diagrams
 
-For more information about the technologies used:
+### Event Trace Diagram
+![Event Trace](screenshots/diagrams/Event-Trace-Diagram.png)
+*Event trace diagram*
 
-- [Next.js Documentation](https://nextjs.org/docs)
-- [NextAuth.js Documentation](https://next-auth.js.org/)
-- [Tailwind CSS Documentation](https://tailwindcss.com/docs)
-- [MongoDB Documentation](https://docs.mongodb.com/)
+### Data Flow Diagram
+![Data Flow](screenshots/diagrams/DF-Diagram.png)
+*Data flow diagram*
+
+### Entity Relationship Diagram
+![ERD](screenshots/diagrams/ER-Diagram.png)
+*Entity relationship diagram*
+
+## 📚 Screenshots
+
+### Registration Page
+![Registration Page](screenshots/reg-desk.png)
+*User registration interface*
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-desk.png)
+*Admin dashboard for managing events and tickets*
+
+
+### QR Code Scanner
+![QR Code Scanner](screenshots/scan-qr.png)
+*QR code scanning interface for ticket validation*
+
+### Ticket Validation
+![Ticket Validation](screenshots/scan-qr-checkin-success.png)
+*Ticket validation interface*
+
+### Ticket Validation - Checkin Success
+![Ticket Validation - Checkin Success](screenshots/scan-qr-checkin-success.png)
+*Ticket validation interface - checkin success*
+
+### Ticket Validation - Duplicate Scan
+![Ticket Validation - Duplicate Scan](screenshots/scan-qr-checkin-dupe.png)
+*Ticket validation interface - duplicate scan*
+
+### Email Templates - Success Email
+![Success Email](screenshots/success-email.png)
+*Custom email template for ticket rejections*
+
+
+### Email Templates - Rejection Email
+![Rejection Email](screenshots/fail-email.png)
+*Custom email template for ticket rejections*
+
+### PDF Tickets
+![PDF Ticket](screenshots/ticket-ss.jpg)
+*Generated PDF ticket with QR code*
 
 ## 🤝 Contributing
 
