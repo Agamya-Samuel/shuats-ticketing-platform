@@ -2,6 +2,20 @@
 
 A modern ticketing and event registration platform built with Next.js 15, featuring QR code generation, email notifications, and PDF ticket generation.
 
+## 📚 Diagrams
+
+### Event Trace Diagram
+![Event Trace](screenshots/diagrams/Event-Trace-Diagram.png)
+*Event trace diagram*
+
+### Data Flow Diagram
+![Data Flow](screenshots/diagrams/DF-Diagram.png)
+*Data flow diagram*
+
+### Entity Relationship Diagram
+![ERD](screenshots/diagrams/ER-Diagram.png)
+*Entity relationship diagram*
+
 ## 🚀 Key Features
 
 - **Authentication & Authorization**
@@ -87,19 +101,6 @@ yarn dev
 - MongoDB database
 - Email service provider (Resend)
 
-## 📚 Diagrams
-
-### Event Trace Diagram
-![Event Trace](screenshots/diagrams/Event-Trace-Diagram.png)
-*Event trace diagram*
-
-### Data Flow Diagram
-![Data Flow](screenshots/diagrams/DF-Diagram.png)
-*Data flow diagram*
-
-### Entity Relationship Diagram
-![ERD](screenshots/diagrams/ER-Diagram.png)
-*Entity relationship diagram*
 
 ## 📚 Screenshots
 
