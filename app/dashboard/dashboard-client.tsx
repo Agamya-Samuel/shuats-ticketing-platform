@@ -22,6 +22,7 @@ import {
 import { LoadingSkeleton } from '@/app/dashboard/loading-skeleton';
 import { useSession } from 'next-auth/react';
 import { LoadingSpinner } from '@/components/ui/loading-spinner';
+import { AnalyticsSection } from '@/app/dashboard/analytics-section';
 
 interface Registration {
 	_id: string;
@@ -71,29 +72,42 @@ export function DashboardClient() {
 		setSearchTerm(event.target.value);
 	};
 
-	const filteredRequests = requests.filter((request) => {
-		const searchMatches =
-			request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			request.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			request.mobile.includes(searchTerm);
+	const filteredRequests = requests
+		.filter((request) => {
+			const searchMatches =
+				request.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+				request.email
+					.toLowerCase()
+					.includes(searchTerm.toLowerCase()) ||
+				request.mobile.includes(searchTerm);
 
-		if (activeTab === 'checkedIn') {
-			return searchMatches && request.checkedIn;
-		}
+			if (activeTab === 'checkedIn') {
+				return searchMatches && request.checkedIn;
+			}
 
-		return searchMatches && request.status === activeTab;
-	}).sort((a, b) => {
-		if (activeTab === 'accepted' && a.approvedOn && b.approvedOn) {
-			return new Date(b.approvedOn).getTime() - new Date(a.approvedOn).getTime();
-		}
-		if (activeTab === 'rejected' && a.rejectedOn && b.rejectedOn) {
-			return new Date(b.rejectedOn).getTime() - new Date(a.rejectedOn).getTime();
-		}
-		if (activeTab === 'checkedIn' && a.checkedInAt && b.checkedInAt) {
-			return new Date(b.checkedInAt).getTime() - new Date(a.checkedInAt).getTime();
-		}
-		return 0;
-	});
+			return searchMatches && request.status === activeTab;
+		})
+		.sort((a, b) => {
+			if (activeTab === 'accepted' && a.approvedOn && b.approvedOn) {
+				return (
+					new Date(b.approvedOn).getTime() -
+					new Date(a.approvedOn).getTime()
+				);
+			}
+			if (activeTab === 'rejected' && a.rejectedOn && b.rejectedOn) {
+				return (
+					new Date(b.rejectedOn).getTime() -
+					new Date(a.rejectedOn).getTime()
+				);
+			}
+			if (activeTab === 'checkedIn' && a.checkedInAt && b.checkedInAt) {
+				return (
+					new Date(b.checkedInAt).getTime() -
+					new Date(a.checkedInAt).getTime()
+				);
+			}
+			return 0;
+		});
 
 	const handleApprove = async (id: string) => {
 		try {
@@ -182,6 +196,9 @@ export function DashboardClient() {
 					<span className="font-semibold">{counts.total}</span>
 				</div>
 			</div>
+			
+			<AnalyticsSection registrations={requests} />
+			
 			<Tabs
 				defaultValue="pending"
 				className="mb-4"
