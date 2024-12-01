@@ -23,6 +23,10 @@ A modern ticketing and event registration platform built with Next.js 15, featur
   - MongoDB adapter integration for user management
   - Protected API routes
 
+- **Analytics**
+  - Event analytics dashboard
+  - Graphs and charts using `recharts`
+
 - **QR Code System**
   - QR code generation for tickets using `qrcode` library
   - QR code scanning capabilities via `html5-qrcode`
@@ -109,7 +113,7 @@ yarn dev
 *User registration interface*
 
 ### Admin Dashboard
-![Admin Dashboard](screenshots/admin-desk.png)
+![Admin Dashboard](screenshots/dash-desk-analytics.png)
 *Admin dashboard for managing events and tickets*
 
 
@@ -148,4 +152,4 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 
 ## 📄 License
 
-This project is private and proprietary software.
+This project is open source and free to use with proper attribution to the original author [@Agamya-Samuel](https://github.com/Agamya-Samuel)
