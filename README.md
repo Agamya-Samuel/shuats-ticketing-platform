@@ -126,7 +126,7 @@ yarn dev
 *Ticket validation interface*
 
 ### Ticket Validation - Checkin Success
-![Ticket Validation - Checkin Success](screenshots/scan-qr-checkin-success.png)
+![Ticket Validation - Checkin Success](screenshots/check-in-success.png)
 *Ticket validation interface - checkin success*
 
 ### Ticket Validation - Duplicate Scan
